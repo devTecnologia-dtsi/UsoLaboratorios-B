@@ -1,11 +1,12 @@
 <?php
 require_once __DIR__ . '/../controllers/ValidarCorreoController.php';
+require_once __DIR__ . '/../controllers/RectoriasController.php'; // Agregar esta línea
 
 // Configuración de cabeceras CORS y métodos permitidos
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-header("Allow: GET, POST, OPTIONS, PUT, DELETE");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE, PATCH"); // Agregar PATCH
+header("Allow: GET, POST, OPTIONS, PUT, DELETE, PATCH"); // Agregar PATCH
 header("Content-Type: application/json; charset=utf-8");
 
 // Obtener la URL solicitada
@@ -29,20 +30,20 @@ $antepenultimateSegment = $pathSegments[count($pathSegments) - 2] ?? null;
 parse_str($query, $queryParams);
 
 switch (true) {
-
-
     case 'validar-correo' === $endPathSegments && $rutaBase !== null:
-        // $accesoUsuarioController->validateToken();
         require_once __DIR__ . '/../views/ValidarCorreo.php';
+        break;
+
+    case 'rectorias' === $endPathSegments && $rutaBase !== null: // Agregar este caso
+        require_once __DIR__ . '/../views/rectorias.php';
         break;
 
     case 'error' === $rutaBase:
         require_once __DIR__ . '/../views/error.php';
         break;
     default:
-        // Enviar un código de estado 503 
         if (!headers_sent()) {
-            header('HTTP/1.1 503 Service Unavailable'); // Indicar que el servicio no está disponible
+            header('HTTP/1.1 503 Service Unavailable');
         }
         break;
 }
