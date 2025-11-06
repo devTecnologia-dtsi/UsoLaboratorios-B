@@ -35,7 +35,15 @@ switch (true) {
         break;
 
     case 'rectorias' === $endPathSegments && $rutaBase !== null: // Agregar este caso
-        require_once __DIR__ . '/../views/rectorias.php';
+        require_once __DIR__ . '/../views/Rectorias.php';
+        break;
+
+    case 'formularios' === $endPathSegments && $rutaBase !== null:
+        require_once __DIR__ . '/../views/Formularios.php';
+        break;
+
+    case 'roles' === $endPathSegments && $rutaBase !== null;
+        require_once __DIR__ . '/../views/Roles.php';
         break;
 
     case 'error' === $rutaBase:

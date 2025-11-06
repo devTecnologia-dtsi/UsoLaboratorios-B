@@ -72,53 +72,70 @@ class Connect
             $response = [];
             $stmt = $this->getConnection()->prepare($sql);
             if ($stmt === false) {
-                throw new Exception("Error al ejecutar la consulta");
+                throw new Exception("Error al preparar la consulta: " . $this->getConnection()->error);
             }
 
-            // Bind parameters
+            // Bind parameters - MANEJO MEJORADO DE NULLs
             if (!empty($params)) {
                 $types = '';
                 $values = [];
+                
                 foreach ($params as $param) {
-                    if (is_int($param)) {
+                    if ($param === null) {
+                        $types .= 's'; // Tratar NULL como string
+                        $values[] = null;
+                    } elseif (is_int($param)) {
                         $types .= 'i';
+                        $values[] = $param;
                     } elseif (is_float($param)) {
                         $types .= 'd';
+                        $values[] = $param;
                     } elseif (is_string($param)) {
                         $types .= 's';
+                        $values[] = $param;
                     } else {
                         $types .= 'b';
+                        $values[] = $param;
                     }
-                    $values[] = $param;
                 }
+                
+                // Debug: Ver qué se está enviando
+                error_log("SQL: $sql");
+                error_log("Types: $types");
+                error_log("Params: " . json_encode($params));
+                
                 $stmt->bind_param($types, ...$values);
             }
             
             // Execute statement
             if (!$stmt->execute()) {
-                throw new Exception("Hubo un error el ejecutar la consulta");
+                throw new Exception("Error al ejecutar la consulta: " . $stmt->error);
             }
 
             // Get result
             $result = $stmt->get_result();
             
-            // Verificar si hay resultados
             if ($result) {
                 $data = $result->fetch_all(MYSQLI_ASSOC);
                 
-                // Si es una operación que retorna resp/mensaje (CREATE, EDITAR, ELIMINAR)
                 if (isset($data[0]['resp'])) {
-                    $response = $data[0]; // Retorna directamente {resp: true, mensaje: "..."}
+                    $response = $data[0];
                 } else {
-                    // Si es LISTAR o BUSCAR, retorna los datos
                     $response = ['resp' => true, 'data' => $data];
                 }
             } else {
-                // Para operaciones que no retornan datos (pero fueron exitosas)
-                $response = ['resp' => true, 'mensaje' => 'Operación exitosa'];
+                // Si no hay resultado pero la ejecución fue exitosa (INSERT/UPDATE)
+                if ($stmt->affected_rows > 0) {
+                    $response = ['resp' => true, 'mensaje' => 'Operación exitosa'];
+                } else {
+                    $response = ['resp' => true, 'mensaje' => 'No se afectaron filas'];
+                }
             }
             
+            $stmt->close();
+            
         } catch (\Exception $e) {
+            error_log("Error en query: " . $e->getMessage());
             $response = ['resp' => false, 'error' => $e->getMessage()];
         }
         return $response;
@@ -127,38 +144,46 @@ class Connect
     public function execute($sql, $params)
     {
         try {
-            $response = [];
             $stmt = $this->getConnection()->prepare($sql);
             if ($stmt === false) {
-                throw new Exception("Error al conectarse a la base de datos");
+                throw new Exception("Error al preparar la consulta: " . $this->getConnection()->error);
             }
 
-            // Bind parameters
             if (!empty($params)) {
                 $types = '';
                 $values = [];
+                
                 foreach ($params as $param) {
-                    if (is_int($param)) {
+                    if ($param === null) {
+                        $types .= 's';
+                        $values[] = null;
+                    } elseif (is_int($param)) {
                         $types .= 'i';
+                        $values[] = $param;
                     } elseif (is_float($param)) {
                         $types .= 'd';
+                        $values[] = $param;
                     } elseif (is_string($param)) {
                         $types .= 's';
+                        $values[] = $param;
                     } else {
                         $types .= 'b';
+                        $values[] = $param;
                     }
-                    $values[] = $param;
                 }
+                
                 $stmt->bind_param($types, ...$values);
             }
 
-            // Execute statement
             if (!$stmt->execute()) {
-                throw new Exception("¡Ups! Hubo un error el ejecutar la consulta");
+                throw new Exception("Error al ejecutar: " . $stmt->error);
             }
 
             $response = ['resp' => true, 'id' => $stmt->insert_id];
+            $stmt->close();
+            
         } catch (\Exception $e) {
+            error_log("Error en execute: " . $e->getMessage());
             $response = ['resp' => false, 'error' => $e->getMessage()];
         }
         return $response;
