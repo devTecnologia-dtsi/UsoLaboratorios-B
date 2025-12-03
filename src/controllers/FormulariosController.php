@@ -12,12 +12,8 @@ class FormulariosController
 
     public function listar()
     {
-        try {
-            $resultado = $this->model->listar();
-            echo json_encode($resultado, JSON_UNESCAPED_UNICODE);
-        } catch (Exception $e) {
-            echo json_encode(['resp' => false, 'mensaje' => $e->getMessage()]);
-        }
+        $resultado = $this->model->gestionar('LISTAR');
+        echo json_encode($resultado, JSON_UNESCAPED_UNICODE);
     }
 
     public function buscar($idFormulario)
@@ -28,7 +24,8 @@ class FormulariosController
                 return;
             }
             
-            $resultado = $this->model->buscar((int)$idFormulario);
+
+            $resultado = $this->model->gestionar('BUSCAR', ['idFormulario' => (int)$idFormulario]);
             echo json_encode($resultado, JSON_UNESCAPED_UNICODE);
         } catch (Exception $e) {
             echo json_encode(['resp' => false, 'mensaje' => $e->getMessage()]);
@@ -37,51 +34,85 @@ class FormulariosController
 
     public function crear()
     {
-        try {
-            $input = json_decode(file_get_contents('php://input'), true);
-            
-            if (!$input) {
-                echo json_encode(['resp' => false, 'mensaje' => 'Datos JSON inválidos']);
-                return;
-            }
-            
-            // Validar campos requeridos
-            $camposRequeridos = ['IdUsuarios', 'IdSalones', 'IdTiposPractica', 'IdRecursos', 'FechaPractica', 'HoraEntrada', 'HoraSalida', 'EstudiantesPractica', 'ProfesoresPractica'];
-            foreach ($camposRequeridos as $campo) {
-                if (!isset($input[$campo]) || $input[$campo] === '') {
-                    echo json_encode(['resp' => false, 'mensaje' => "Campo $campo es requerido"]);
-                    return;
-                }
-            }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $idUsuarios = $input['IdUsuarios'] ?? null;
+        $idSalones = $input['IdSalones'] ?? null;
+        $idTiposPractica = $input['IdTiposPractica'] ?? null;
+        $idRecursos = $input['IdRecursos'] ?? null;
+        $idProgramasXCO = $input['IdProgramasXCO'] ?? null;
+        $fechaPractica = $input['FechaPractica'] ?? null;
+        $horaEntrada = $input['HoraEntrada'] ?? null;
+        $horaSalida = $input['HoraSalida'] ?? null;
+        $estudiantesPractica = $input['EstudiantesPractica'] ?? null;
+        $profesoresPractica = $input['ProfesoresPractica'] ?? null;
 
-            $resultado = $this->model->crear($input);
-            echo json_encode($resultado, JSON_UNESCAPED_UNICODE);
-            
-        } catch (Exception $e) {
-            echo json_encode(['resp' => false, 'mensaje' => $e->getMessage()]);
+        if (!$idUsuarios || !$idSalones || !$idTiposPractica || !$idRecursos || !$idProgramasXCO || !$fechaPractica || !$horaEntrada || !$horaSalida || $estudiantesPractica === null || $profesoresPractica === null) {
+            echo json_encode(['resp' => false, 'mensaje' => 'Todos los campos son requeridos']);
+            return;
         }
+
+        //Usar array asociativo
+        $params = [
+            'idUsuarios' => (int)$idUsuarios,
+            'idSalones' => (int)$idSalones,
+            'idTiposPractica' => (int)$idTiposPractica,
+            'idRecursos' => (int)$idRecursos,
+            'idProgramasXCO' => (int)$idProgramasXCO,
+            'fechaPractica' => $fechaPractica,
+            'horaEntrada' => $horaEntrada,
+            'horaSalida' => $horaSalida,
+            'estudiantesPractica' => (int)$estudiantesPractica,
+            'profesoresPractica' => (int)$profesoresPractica
+        ];
+
+        $resultado = $this->model->gestionar('CREAR', $params);
+        echo json_encode($resultado);
     }
 
-    public function editar($idFormulario)
+    public function editar()
     {
-        try {
-            $input = json_decode(file_get_contents('php://input'), true);
-            
-            if (!$idFormulario) {
-                echo json_encode(['resp' => false, 'mensaje' => 'ID requerido']);
-                return;
-            }
+        $input = json_decode(file_get_contents('php://input'), true);
+        $id = $input['IdFormulario'] ?? null;
+        $idUsuarios = $input['IdUsuarios'] ?? null;
+        $idSalones = $input['IdSalones'] ?? null;
+        $idTiposPractica = $input['IdTiposPractica'] ?? null;
+        $idRecursos = $input['IdRecursos'] ?? null;
+        $idProgramasXCO = $input['IdProgramasXCO'] ?? null;
+        $fechaPractica = $input['FechaPractica'] ?? null;
+        $horaEntrada = $input['HoraEntrada'] ?? null;
+        $horaSalida = $input['HoraSalida'] ?? null;
+        $estudiantesPractica = $input['EstudiantesPractica'] ?? null;
+        $profesoresPractica = $input['ProfesoresPractica'] ?? null;
 
-            if (!$input) {
-                echo json_encode(['resp' => false, 'mensaje' => 'Datos JSON inválidos']);
-                return;
-            }
-
-            $resultado = $this->model->editar((int)$idFormulario, $input);
-            echo json_encode($resultado, JSON_UNESCAPED_UNICODE);
-            
-        } catch (Exception $e) {
-            echo json_encode(['resp' => false, 'mensaje' => $e->getMessage()]);
+        if (!$id) {
+            echo json_encode(['resp' => false, 'mensaje' => 'ID requerido']);
+            return;
         }
+
+   
+        $params = ['idFormulario' => (int)$id];
+        
+        // Solo agregar campos que fueron enviados
+        $camposPosibles = [
+            'IdUsuarios' => 'idUsuarios',
+            'IdSalones' => 'idSalones', 
+            'IdTiposPractica' => 'idTiposPractica',
+            'IdRecursos' => 'idRecursos',
+            'IdProgramasXCO' => 'idProgramasXCO',
+            'FechaPractica' => 'fechaPractica',
+            'HoraEntrada' => 'horaEntrada',
+            'HoraSalida' => 'horaSalida',
+            'EstudiantesPractica' => 'estudiantesPractica',
+            'ProfesoresPractica' => 'profesoresPractica'
+        ];
+
+        foreach ($camposPosibles as $campoInput => $campoParam) {
+            if (isset($input[$campoInput])) {
+                $params[$campoParam] = $input[$campoInput];
+            }
+        }
+
+        $resultado = $this->model->gestionar('EDITAR', $params);
+        echo json_encode($resultado);
     }
 }
