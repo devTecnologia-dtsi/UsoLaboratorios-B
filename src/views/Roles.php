@@ -13,7 +13,6 @@ try {
             break;
 
         case 'PATCH':
-            // Usar query parameter para determinar la acción
             $tipo = $_GET['tipo'] ?? '';
             
             if ($tipo === 'estado') {

@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../controllers/ValidarCorreoController.php';
-require_once __DIR__ . '/../controllers/RectoriasController.php'; // Agregar esta línea
+require_once __DIR__ . '/../controllers/RectoriasController.php'; 
 
 // Configuración de cabeceras CORS y métodos permitidos
 header("Access-Control-Allow-Origin: *");
@@ -34,7 +34,7 @@ switch (true) {
         require_once __DIR__ . '/../views/ValidarCorreo.php';
         break;
 
-    case 'rectorias' === $endPathSegments && $rutaBase !== null: // Agregar este caso
+    case 'rectorias' === $endPathSegments && $rutaBase !== null:
         require_once __DIR__ . '/../views/Rectorias.php';
         break;
 
@@ -46,6 +46,26 @@ switch (true) {
         require_once __DIR__ . '/../views/Roles.php';
         break;
 
+    case 'recursos' === $endPathSegments && $rutaBase !== null;
+        require_once __DIR__ . '/../views/Recursos.php';
+        break;
+
+    case 'salones' === $endPathSegments && $rutaBase !== null;
+        require_once __DIR__ . '/../views/Salones.php';
+        break;
+    
+    case 'recursos-salones' === $endPathSegments && $rutaBase !== null;
+        require_once __DIR__ . '/../views/RecursosSalon.php';
+        break;
+    
+    case 'programas' === $endPathSegments && $rutaBase !== null;
+        require_once __DIR__ . '/../views/Programas.php';
+        break;
+
+    case 'usuarios' === $endPathSegments && $rutaBase !== null;
+        require_once __DIR__ . '/../views/Usuarios.php';
+        break;
+    
     case 'error' === $rutaBase:
         require_once __DIR__ . '/../views/error.php';
         break;
@@ -55,41 +75,6 @@ switch (true) {
         }
         break;
 }
-
-
-// header('Content-Type: application/json; charset=utf-8');
-
-// // Obtener la URL solicitada
-// $url = $_SERVER['REQUEST_URI'];
-
-// // Obtener el método HTTP de la solicitud (GET, POST, etc.)
-// $metodo = $_SERVER['REQUEST_METHOD'];
-
-// // Analizar la URL para obtener sus componentes
-// $urlComponents = parse_url($url);
-
-// // Obtener la ruta y los parámetros de consulta
-// $path = $urlComponents['path'] ?? ''; // Ruta de la URL
-// $query = $urlComponents['query'] ?? ''; // Parámetros de consulta
-
-// // Separar los segmentos de la ruta
-// $pathSegments = explode('/', trim($path, '/')); // Dividir la ruta en segmentos
-// //$rutaBase = $pathSegments[1] ?? '/'; 
-
-// // Obtener el último segmento de la ruta
-// $endPathSegments = $pathSegments[count($pathSegments) - 1];
-// //$path = $_GET['path'] ?? '';
-
-// switch ($endPathSegments) {
-//     case 'validar-correo': //=== $endPathSegments && $rutaBase !== null:
-//         require __DIR__ . '/../controllers/ValidarCorreoController.php';
-//         break;
-
-//     default:
-//     http_response_code(404);
-//         echo json_encode(['error' => 'Ruta no encontrada']);
-//         break;
-// }
 
 
 ?>
