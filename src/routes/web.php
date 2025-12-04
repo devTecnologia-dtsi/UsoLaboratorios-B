@@ -2,11 +2,6 @@
 require_once __DIR__ . '/../controllers/ValidarCorreoController.php';
 require_once __DIR__ . '/../controllers/RectoriasController.php'; 
 
-// Configuración de cabeceras CORS y métodos permitidos
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE, PATCH"); // Agregar PATCH
-header("Allow: GET, POST, OPTIONS, PUT, DELETE, PATCH"); // Agregar PATCH
 header("Content-Type: application/json; charset=utf-8");
 
 // Obtener la URL solicitada

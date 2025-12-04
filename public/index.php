@@ -1,11 +1,7 @@
 <?php
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    // Puedes devolver una respuesta vacía o un código de estado 405
-    header('HTTP/1.1 405 Method Not Allowed');
-    exit;
-}
-
+// Cargar configuración de CORS centralizada
+require_once __DIR__ . '/../config/cors.php';
 require_once __DIR__ . '/../src/routes/web.php';
 //require __DIR__ . '../../src/routes/web.php';
 
