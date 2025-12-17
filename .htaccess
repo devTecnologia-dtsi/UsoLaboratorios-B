@@ -13,11 +13,11 @@
     Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, X-API-KEY"
     Header always set Access-Control-Max-Age "3600"
     
-    # Para desarrollo local - descomenta según necesites
+    # Para desarrollo local
     # Header always set Access-Control-Allow-Origin "http://localhost:3000"
     # Header always set Access-Control-Allow-Origin "http://localhost:8080"
     
-    # Para producción - descomenta y ajusta
+    # Para producción
     # Header always set Access-Control-Allow-Origin "https://tudominio.com"
 </IfModule>
 

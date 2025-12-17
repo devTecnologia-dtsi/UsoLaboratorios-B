@@ -5,7 +5,13 @@ $rectorias = new RectoriasController();
 try {
     switch ($_SERVER['REQUEST_METHOD']) {
         case 'GET':
-            $rectorias->listar();
+            // Verificar si es búsqueda por descripción
+            if (isset($_GET['Descripcion'])) {
+                $termino = $_GET['Descripcion'];
+                $rectorias->buscarPorDescripcion($termino);
+            } else {
+                $rectorias->listar();
+            }
             break;
 
         case 'POST':

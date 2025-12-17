@@ -16,15 +16,15 @@ class SalonesController
         echo json_encode($resultado);
     }
 
-    public function buscar($idSalones)
+    public function buscar($nombreSalon)
     {
         try {
-            if (!$idSalones) {
-                echo json_encode(['resp' => false, 'mensaje' => 'ID requerido']);
+            if (!$nombreSalon) {
+                echo json_encode(['resp' => false, 'mensaje' => 'Nombre a buscar requerido']);
                 return;
             }
             
-            $resultado = $this->model->gestionar('BUSCAR', null, null, null, null, null, (int)$idSalones);
+            $resultado = $this->model->gestionar('BUSCAR', null, null, null, null, null, null, (int)$nombreSalon);
             echo json_encode($resultado, JSON_UNESCAPED_UNICODE);
         } catch (Exception $e) {
             echo json_encode(['resp' => false, 'mensaje' => $e->getMessage()]);

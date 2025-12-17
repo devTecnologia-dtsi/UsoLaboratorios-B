@@ -2,8 +2,8 @@
 // CONEXION PRUEBAS O LOCAL
 
 define("DB_SERV", "10.0.20.189");
-define("DB_USER", "root");
-define("DB_PASS", "Jailton81*");
+define("DB_USER", "des_usabi");
+define("DB_PASS", "Des_ap1_u5481*");
 define("DB_NAME", "USABILIDAD2");
  
 // CONEXION PRODUCCION

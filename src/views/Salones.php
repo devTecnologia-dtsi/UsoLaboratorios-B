@@ -5,9 +5,9 @@ $salones = new SalonesController();
 try {
     switch ($_SERVER['REQUEST_METHOD']) {
         case 'GET':
-            $idSalones = $_GET['IdSalones'] ?? null;
+            $idSalones = $_GET['nombre'] ?? null;
             if ($idSalones) {
-                $salones->buscar($idSalones);
+                $salones->buscar($nombreSalon);
             } else {
                 $salones->listar();
             }
